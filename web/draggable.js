@@ -193,8 +193,8 @@ function draw() {
     for (var i = 0; i < zeros.length; i++){
         zeros[i].display();
     }
-    console.log('point',overPoint)
-    //overCanvas = false;
+   
+
 }
 
 function mouseOverCnv(){
@@ -254,7 +254,7 @@ function appendZero() {
     }
 }
 
-function mouseClicked() {
+function mousePressed() {
     if (poleButton) {
 
         appendPole();
