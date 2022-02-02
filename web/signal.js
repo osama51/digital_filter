@@ -25,8 +25,8 @@ document.getElementById("chart").style.resize = "both";
         var file = files[0];
 
         // read the file metadata
-        var output = ''
-            output += '<span style="font-weight:bold;">' + escape(file.name) + '</span><br />\n';
+        // var output = ''
+        //     output += '<span style="font-weight:bold;">' + escape(file.name) + '</span><br />\n';
 
         // read the file contents
         readFile(file); //case 1
@@ -35,7 +35,7 @@ document.getElementById("chart").style.resize = "both";
 
         flag = 1;
         // post the results
-        $('#list').append(output);
+        //$('#list').append(output);
       }
       
       function preparedata(data){
@@ -82,11 +82,66 @@ document.getElementById("chart").style.resize = "both";
         reader.onerror = function(){ alert('Unable to read ' + file.fileName); };
       }
 
-      var layout1 = {
-        title: 'Original Signal'
+      var layout3 = {
+        title: 'Original Signal',
+        xaxis: {
+          title: 'Time',
+          titlefont: {
+            family: 'Arial, sans-serif',
+            size: 12,
+            color: 'black'
+          },
+          showticklabels: true,
+          tickangle: 'auto',
+          tickfont: {
+            //family: 'Old Standard TT, serif',
+            size: 10,
+            //color: 'black'
+          },
+        },
+        yaxis: {
+          title: 'EMG Signal (mV)',
+          titlefont: {
+            family: 'Arial, sans-serif',
+            size: 12,
+            color: 'black'
+          },
+          showticklabels: true,
+          tickfont: {
+            size: 10,
+          },
+        }
       };
-      var layout2 = {
-        title: 'Filtered Signal'
+
+      var layout4 = {
+        title: 'Filtered Signal',
+        xaxis: {
+          title: 'Time',
+          titlefont: {
+            family: 'Arial, sans-serif',
+            size: 12,
+            color: 'black'
+          },
+          showticklabels: true,
+          tickangle: 'auto',
+          tickfont: {
+            //family: 'Old Standard TT, serif',
+            size: 10,
+            //color: 'black'
+          },
+        },
+        yaxis: {
+          title: 'EMG Signal (mV)',
+          titlefont: {
+            family: 'Arial, sans-serif',
+            size: 12,
+            color: 'black'
+          },
+          showticklabels: true,
+          tickfont: {
+            size: 10,
+          },
+        }
       };
       
 
@@ -96,7 +151,7 @@ document.getElementById("chart").style.resize = "both";
 
           type:'scatter',
           
-      }], layout1);
+      }], layout3);
 
       Plotly.relayout('chart',{
               xaxis: {
@@ -109,7 +164,7 @@ document.getElementById("chart").style.resize = "both";
           x: [],
           
           type:'line'
-      }], layout2);
+      }], layout4);
 
       Plotly.relayout('chart2',{
               xaxis: {

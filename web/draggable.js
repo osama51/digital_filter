@@ -9,37 +9,56 @@ let leftWall = 0;
 let rightWall = 300;
 let topWall = 0;
 let bottomWall = 150;
-
+let poleButton = false;
+let zeroButton = false;
+let overPoint = false;
+let overCanvas = false;
 
 var poles = [];
 var zeros = [];
 
 
 function setup() {
-  var myCanvas = createCanvas(300, 300);
-  myCanvas.parent("canvas");
-  bx = constrain(width / 2.0, leftWall, rightWall);
-  by = constrain(height / 2.0, leftWall, rightWall);
-  
-  rectMode(RADIUS);
-  strokeWeight(2);
+    var myCanvas = createCanvas(300, 300);
+    myCanvas.mouseOver(mouseOverCnv);
+    myCanvas.mouseOut(mouseOutCnv);
 
+    myCanvas.parent("canvas");
+    bx = constrain(width / 2.0, leftWall, rightWall);
+    by = constrain(height / 2.0, leftWall, rightWall);
+    
+    rectMode(RADIUS);
+    strokeWeight(2);
+    
+    let col2 = color(50,50,50);
+  let col = color(105,105,105);
   buttonPole = createButton('Add Pole');
-  buttonPole.parent("container")
+  buttonPole.style('background-color', col);
+  buttonPole.style('font-size', '18px');
+  buttonPole.style('color', '#FFFFFF');
+  //buttonPole.style('border', '#FFFAFA');
+  buttonPole.style('width', '150px');
+  buttonPole.parent("container");
   buttonPole.position(150, 600);
-  buttonPole.mousePressed(() => poles.push(new pole(150, 150)));
+  //buttonPole.mousePressed(() => poles.push(new pole(150, 150)));
+  buttonPole.mousePressed(() => selectable('pole'));
   
   buttonZero = createButton('Add Zero');
-  buttonZero.parent("container")
+  buttonZero.style('background-color', col);
+  buttonZero.style('font-size', '18px');
+  buttonZero.style('color', '#FFFFFF');
+  //buttonZero.style('border', '#FFFAFA');
+  buttonZero.style('width', '150px');
+  buttonZero.parent("container");
   buttonZero.position(150, 650);
-  buttonZero.mousePressed(() => zeros.push(new zero(150, 150)));
+  buttonZero.mousePressed(() => selectable('zero'));
 
 }
 
 class pole {
     constructor(x, y) {
-        this.x = constrain(150, leftWall, rightWall);
-        this.y = constrain(150, topWall, bottomWall);
+        this.x = constrain(x, leftWall, rightWall);
+        this.y = constrain(y, topWall, bottomWall);
         this.conjx = 150;
         this.conjy = 150;
         this.xOffset = 0.0;
@@ -57,12 +76,12 @@ class pole {
             ) {
                 this.overBox = true;
                 if (!this.locked) {
-                    stroke(255);
-                    fill(244, 122, 158);
+                    stroke(100);
+                    fill(200, 200, 200);
                 }
             } else {
-                stroke(156, 39, 176);
-                fill(244, 122, 158);
+                stroke(0);
+                fill(96, 96, 96);
                 this.overBox = false;
             }
             
@@ -73,6 +92,7 @@ class pole {
             //rect(this.x, 300-this.y, boxSize, boxSize);
             line(this.x-5, 300-this.y-5, this.x+5, 300-this.y+5)
             line(this.x+5, 300-this.y-5, this.x-5, 300-this.y+5)
+            console.log(overPoint)
         }
         
         clicked(){
@@ -99,8 +119,8 @@ class pole {
     
 class zero {
         constructor(x, y) {
-            this.x = constrain(150, leftWall, rightWall);
-            this.y = constrain(150, topWall, bottomWall);
+            this.x = constrain(x, leftWall, rightWall);
+            this.y = constrain(y, topWall, bottomWall);
             this.conjx = 150;
             this.conjy = 150;
             this.xOffset = 0.0;
@@ -118,12 +138,12 @@ class zero {
                 ) {
                     this.overBox = true;
                     if (!this.locked) {
-                        stroke(255);
-                        fill(244, 122, 158);
+                        stroke(100);
+                        fill(200, 200, 200);
                     }
                 } else {
-                    stroke(156, 39, 176);
-                    fill(244, 122, 158);
+                    stroke(0);
+                    fill(96, 96, 96);
                     this.overBox = false;
                 }
                 
@@ -151,18 +171,16 @@ class zero {
                 this.y = constrain(mouseY - this.yOffset, topWall, bottomWall);
             }
         }
-        
     }
-    
 }
 
 function draw() {
     background(255,255,255);
-    fill("#D8A7B1");
+    fill("#FFFFFF");
     stroke(20);
     strokeWeight(2);
     circle(150, 150, 240);
-
+    
     translate(width/2,height/2)
     //primary axes
     drawTickAxes(20,0.7,12.2,0,0)
@@ -175,10 +193,77 @@ function draw() {
     for (var i = 0; i < zeros.length; i++){
         zeros[i].display();
     }
+    console.log('point',overPoint)
+    //overCanvas = false;
 }
 
+function mouseOverCnv(){
+    overCanvas = true;
+}
 
-function mousePressed() {
+function mouseOutCnv(){
+    overCanvas = false;
+}
+
+function selectable(mode){
+    if (mode == 'zero'){
+        if (zeroButton){
+            zeroButton = false;
+        }else{
+            zeroButton = true;
+        }
+    }
+    if (mode == 'pole'){
+        if (poleButton){
+            poleButton = false;
+        }else{poleButton = true;
+        }
+    }
+}
+function checkOverPoint(){
+    for (var i = 0; i < zeros.length; i++){
+        
+            if (zeros[i].overBox){
+                overPoint = true;
+                break;
+            }else{ overPoint = false;}
+        
+        
+    }
+    for (var i = 0; i < poles.length; i++){
+        
+            if(poles[i].overBox){
+                overPoint = true;
+                break;
+            }else{ overPoint = false;}
+    }
+    if (poles.length == 0 && zeros.length == 0){overPoint = false;}
+}
+function appendPole() {
+    checkOverPoint();
+    if (!overPoint && overCanvas){
+        poles.push(new pole(mouseX, mouseY));
+    }
+}
+
+function appendZero() {
+    checkOverPoint();
+    if (!overPoint && overCanvas){
+        console.log(!overPoint)
+        zeros.push(new zero(mouseX, mouseY));
+    }
+}
+
+function mouseClicked() {
+    if (poleButton) {
+
+        appendPole();
+    }
+
+    if (zeroButton) {
+        appendZero();
+    }
+
     for (var i = 0; i < poles.length; i++){
         poles[i].clicked();
     }
@@ -234,20 +319,20 @@ function drawTickAxes(lineColor,thickness,spacing,xoffset,yoffset) {
     push();
       translate(this.xoffset,this.yoffset)
     stroke(this.lineColor)
-    for (var i = 0; i<height/2; i+=this.spacing){
+    // for (var i = 0; i<height/2; i+=this.spacing){
       
-          //vertical tickmarks
-          stroke(this.lineColor)
-          strokeWeight(this.thickness);
-         line(+2,i,-2,i)
-         line(+2,-i,-2,-i)
+    //       //vertical tickmarks
+    //       stroke(this.lineColor)
+    //       strokeWeight(this.thickness);
+    //      line(+2,i,-2,i)
+    //      line(+2,-i,-2,-i)
         
-            //horizontal tickmarks
-          stroke(this.lineColor)
-          strokeWeight(this.thickness);
-         line(i,+3,i,-3)
-         line(-i,+3,-i,-3)
-    }
+    //         //horizontal tickmarks
+    //       stroke(this.lineColor)
+    //       strokeWeight(this.thickness);
+    //      line(i,+3,i,-3)
+    //      line(-i,+3,-i,-3)
+    // }
 
     stroke(this.lineColor)
     strokeWeight(this.thickness);
