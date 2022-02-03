@@ -12,7 +12,11 @@ let bottomWall = 150;
 let poleButton = false;
 let zeroButton = false;
 let overPoint = false;
+let overPole = false;
+let overZero= false;
 let overCanvas = false;
+let isOn = false;
+let picked = false;
 
 var poles = [];
 var zeros = [];
@@ -98,6 +102,7 @@ class pole {
         clicked(){
             if (this.overBox) {
                 this.locked = true;
+                picked = true;
                 fill(255, 255, 255);
             } else {
                 this.locked = false;
@@ -155,6 +160,7 @@ class zero {
     clicked(){
         if (this.overBox) {
             this.locked = true;
+            picked = true;
             fill(255, 255, 255);
         } else {
             this.locked = false;
@@ -176,6 +182,7 @@ class zero {
 
 function draw() {
     background(255,255,255);
+    
     fill("#FFFFFF");
     stroke(20);
     strokeWeight(2);
@@ -193,7 +200,7 @@ function draw() {
     for (var i = 0; i < zeros.length; i++){
         zeros[i].display();
     }
-   
+    
 
 }
 
@@ -224,19 +231,20 @@ function checkOverPoint(){
     for (var i = 0; i < zeros.length; i++){
         
             if (zeros[i].overBox){
-                overPoint = true;
+                overZero = true;
                 break;
-            }else{ overPoint = false;}
+            }else{ overZero = false;}
         
         
     }
     for (var i = 0; i < poles.length; i++){
         
             if(poles[i].overBox){
-                overPoint = true;
+                overPole = true;
                 break;
-            }else{ overPoint = false;}
+            }else{ overPole = false;}
     }
+    if (!overPole && !overZero){overPoint = false;}else{overPoint = true;}
     if (poles.length == 0 && zeros.length == 0){overPoint = false;}
 }
 function appendPole() {
@@ -301,6 +309,7 @@ function doubleClicked() {
 }
 
 function mouseReleased() {
+    picked = false;
     for (var i = 0; i < poles.length; i++){
         poles[i].locked = false;
     }
