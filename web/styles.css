@@ -8,6 +8,16 @@
 
 body {
   font-family: 'Poppins', sans-serif;
+  display: flex;
+	min-height: 100%;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	
+}
+
+table, th, td {
+  border:0px;
 }
 
 .container {
@@ -15,14 +25,16 @@ body {
   margin: 30px ;
   overflow: auto;
   min-height: 500px auto;
-  border: 1px solid steelblue;
+  border: 1px solid rgb(5, 84, 148);
   padding: 30px;
   border-radius: 5px;
+  
 }
 
 canvas {
   border-radius: 3px;
   border: 1px solid rgb(0, 0, 0);
+  
 }
 
 button {
@@ -34,8 +46,8 @@ button {
 
 .center {
   margin-left: auto;
-  margin-right: auto;
-  margin-top: auto;
+  margin-right: 0px;
+  margin-top: 0px;
   width: 30%;
   padding: 10px;
 }
@@ -75,10 +87,18 @@ button {
 }
 
 .header {
+  background-color: rgb(123, 129, 127);
+  
   display: flex;
-  justify-content: right;
+  justify-content: left;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  width: 700px;
+  height: 75px;
+}
+
+h1 {
+  color: rgb(255, 255, 255);
 }
 
 .btn {
@@ -115,14 +135,21 @@ button {
 }
 
 .float-container {
-  border: 3px solid #fff;
+  width: 100%;
   margin: 0px;
   padding: 0px;
+  display: table;
+  justify-content: left;
+  align-items: center;
+}
+.table-row {
+  display: table-row;
 }
 
 .float-child {
-  width: 50%;
-  float: left;
+  display: table-cell;
+  width: fit-content;
+
   margin: 0px;
   padding: 0px;
   
@@ -135,6 +162,150 @@ input[type=button], input[type=file], input[type=submit], input[type=reset] {
   text-decoration: none;
   margin: 4px 2px;
   cursor: pointer;
+}
+
+/* The switch - the box around the slider */
+.switch-label {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch-label input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.tgl {
+  display: none;
+}
+.tgl, .tgl:after, .tgl:before, .tgl *, .tgl *:after, .tgl *:before, .tgl + .tgl-btn {
+  box-sizing: border-box;
+}
+.tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
+  background: none;
+}
+.tgl + .tgl-btn {
+  outline: 0;
+  display: block;
+  width: 4em;
+  height: 2em;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+.tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
+  position: relative;
+  display: block;
+  content: "";
+  width: 50%;
+  height: 100%;
+}
+.tgl + .tgl-btn:after {
+  left: 0;
+}
+.tgl + .tgl-btn:before {
+  display: none;
+}
+.tgl:checked + .tgl-btn:after {
+  left: 50%;
+}
+.tgl-skewed + .tgl-btn {
+  overflow: hidden;
+  transform: skew(0deg);
+  backface-visibility: hidden;
+  transition: all 0.2s ease;
+  font-family: sans-serif;
+  background: #888;
+}
+.tgl-skewed + .tgl-btn:after, .tgl-skewed + .tgl-btn:before {
+  transform: skew(0deg);
+  display: inline-block;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  line-height: 2em;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+}
+.tgl-skewed + .tgl-btn:after {
+  left: 100%;
+  content: attr(data-tg-on);
+}
+.tgl-skewed + .tgl-btn:before {
+  left: 0;
+  content: attr(data-tg-off);
+}
+.tgl-skewed + .tgl-btn:active {
+  background: #888;
+}
+.tgl-skewed + .tgl-btn:active:before {
+  left: -10%;
+}
+.tgl-skewed:checked + .tgl-btn {
+  background: #367bd4;
+}
+.tgl-skewed:checked + .tgl-btn:before {
+  left: -100%;
+}
+.tgl-skewed:checked + .tgl-btn:after {
+  left: 0;
+}
+.tgl-skewed:checked + .tgl-btn:active:after {
+  left: 10%;
 }
 
 footer {

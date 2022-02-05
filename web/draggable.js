@@ -6,11 +6,9 @@ let locked = false;
 let xOffset = 0.0;
 let yOffset = 0.0;
 let leftWall = 0;
-let rightWall = 300;
+let rightWall = 240;
 let topWall = 0;
-let bottomWall = 150;
-let poleButton = false;
-let zeroButton = false;
+let bottomWall = 120;
 let overPoint = false;
 let overPole = false;
 let overZero= false;
@@ -23,7 +21,7 @@ var zeros = [];
 
 
 function setup() {
-    var myCanvas = createCanvas(300, 300);
+    var myCanvas = createCanvas(240, 240);
     myCanvas.mouseOver(mouseOverCnv);
     myCanvas.mouseOut(mouseOutCnv);
 
@@ -34,28 +32,13 @@ function setup() {
     rectMode(RADIUS);
     strokeWeight(2);
     
-    let col2 = color(50,50,50);
-  let col = color(105,105,105);
-  buttonPole = createButton('Add Pole');
-  buttonPole.style('background-color', col);
-  buttonPole.style('font-size', '18px');
-  buttonPole.style('color', '#FFFFFF');
-  //buttonPole.style('border', '#FFFAFA');
-  buttonPole.style('width', '150px');
-  buttonPole.parent("container");
-  buttonPole.position(150, 600);
-  //buttonPole.mousePressed(() => poles.push(new pole(150, 150)));
-  buttonPole.mousePressed(() => selectable('pole'));
-  
-  buttonZero = createButton('Add Zero');
-  buttonZero.style('background-color', col);
-  buttonZero.style('font-size', '18px');
-  buttonZero.style('color', '#FFFFFF');
-  //buttonZero.style('border', '#FFFAFA');
-  buttonZero.style('width', '150px');
-  buttonZero.parent("container");
-  buttonZero.position(150, 650);
-  buttonZero.mousePressed(() => selectable('zero'));
+
+  var poleCheck = document.getElementById("poleCheck");
+  var zeroCheck = document.getElementById("zeroCheck");
+
+  $(".tgl.tgl-skewed:not([checked])").on('change' , function(){
+    $(".tgl.tgl-skewed").not(this).prop("checked" , false);
+  });
 
 }
 
@@ -63,8 +46,8 @@ class pole {
     constructor(x, y) {
         this.x = constrain(x, leftWall, rightWall);
         this.y = constrain(y, topWall, bottomWall);
-        this.conjx = 150;
-        this.conjy = 150;
+        this.conjx = width/2;
+        this.conjy = height/2;
         this.xOffset = 0.0;
         this.yOffset = 0.0;
         this.locked = false; 
@@ -94,8 +77,8 @@ class pole {
             line(this.x-5, this.y-5, this.x+5, this.y+5)
             line(this.x+5, this.y-5, this.x-5, this.y+5)
             //rect(this.x, 300-this.y, boxSize, boxSize);
-            line(this.x-5, 300-this.y-5, this.x+5, 300-this.y+5)
-            line(this.x+5, 300-this.y-5, this.x-5, 300-this.y+5)
+            line(this.x-5, 240-this.y-5, this.x+5, 240-this.y+5)
+            line(this.x+5, 240-this.y-5, this.x-5, 240-this.y+5)
             console.log(overPoint)
         }
         
@@ -126,8 +109,8 @@ class zero {
         constructor(x, y) {
             this.x = constrain(x, leftWall, rightWall);
             this.y = constrain(y, topWall, bottomWall);
-            this.conjx = 150;
-            this.conjy = 150;
+            this.conjx = width/2;
+            this.conjy = height/2;
             this.xOffset = 0.0;
             this.yOffset = 0.0;
             this.locked = false; 
@@ -154,7 +137,7 @@ class zero {
                 
                 // Draw the box
                 ellipse(this.x, this.y, boxSize, boxSize);
-                ellipse(this.x, 300-this.y, boxSize, boxSize);
+                ellipse(this.x, 240-this.y, boxSize, boxSize);
     }
     
     clicked(){
@@ -186,7 +169,7 @@ function draw() {
     fill("#FFFFFF");
     stroke(20);
     strokeWeight(2);
-    circle(150, 150, 240);
+    circle(120, 120, 200);
     
     translate(width/2,height/2)
     //primary axes
@@ -201,6 +184,13 @@ function draw() {
         zeros[i].display();
     }
     
+    if (poleCheck.checked == true) {
+        if(zeroCheck.checked == true){zeroCheck.checked = false;}
+    }
+    if (zeroCheck.checked == true) {
+        if(poleCheck.checked == true){poleCheck.checked= false;}
+    }
+
 
 }
 
@@ -212,21 +202,21 @@ function mouseOutCnv(){
     overCanvas = false;
 }
 
-function selectable(mode){
-    if (mode == 'zero'){
-        if (zeroButton){
-            zeroButton = false;
-        }else{
-            zeroButton = true;
-        }
-    }
-    if (mode == 'pole'){
-        if (poleButton){
-            poleButton = false;
-        }else{poleButton = true;
-        }
-    }
-}
+// function selectable(mode){
+//     if (mode == 'zero'){
+//         if (zeroButton){
+//             zeroButton = false;
+//         }else{
+//             zeroButton = true;
+//         }
+//     }
+//     if (mode == 'pole'){
+//         if (poleButton){
+//             poleButton = false;
+//         }else{poleButton = true;
+//         }
+//     }
+// }
 function checkOverPoint(){
     for (var i = 0; i < zeros.length; i++){
         
@@ -263,12 +253,12 @@ function appendZero() {
 }
 
 function mousePressed() {
-    if (poleButton) {
+    if (poleCheck.checked == true) {
 
         appendPole();
     }
 
-    if (zeroButton) {
+    if (zeroCheck.checked == true) {
         appendZero();
     }
 
