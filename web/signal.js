@@ -12,7 +12,7 @@ document.getElementById("chart").style.resize = "both";
         $('#files').bind('change', handleFileSelect);
         $.ajax({
           type: "GET",
-          url: "filteredemg.csv",
+          url: "emg.csv",
           dataType: "text",
           success: function(data) {preparedata(data);}
        });
@@ -30,12 +30,19 @@ document.getElementById("chart").style.resize = "both";
 
         // read the file contents
         readFile(file); //case 1
-        
-        
 
         flag = 1;
         // post the results
         //$('#list').append(output);
+      }
+
+      function openfiltered(){
+        $.ajax({
+          type: "GET",
+          url: "filteredemg.csv",
+          dataType: "text",
+          success: function(data) {preparedata(data);}
+       });
       }
       
       function preparedata(data){
