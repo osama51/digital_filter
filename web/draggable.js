@@ -36,6 +36,7 @@ function setup() {
   var poleCheck = document.getElementById("poleCheck");
   var zeroCheck = document.getElementById("zeroCheck");
 
+  document.getElementById("clear").onclick = clearAll;
   $(".tgl.tgl-skewed:not([checked])").on('change' , function(){
     $(".tgl.tgl-skewed").not(this).prop("checked" , false);
   });
@@ -79,7 +80,7 @@ class pole {
             //rect(this.x, 300-this.y, boxSize, boxSize);
             line(this.x-5, 240-this.y-5, this.x+5, 240-this.y+5)
             line(this.x+5, 240-this.y-5, this.x-5, 240-this.y+5)
-            console.log(overPoint)
+            //console.log(overPoint)
         }
         
         clicked(){
@@ -247,7 +248,7 @@ function appendPole() {
 function appendZero() {
     checkOverPoint();
     if (!overPoint && overCanvas){
-        console.log(!overPoint)
+        //console.log(!overPoint)
         zeros.push(new zero(mouseX, mouseY));
     }
 }
@@ -342,4 +343,9 @@ function drawTickAxes(lineColor,thickness,spacing,xoffset,yoffset) {
   
     pop();
   
+  }
+
+  function clearAll(){
+    poles.length = 0;
+    zeros.length = 0;
   }

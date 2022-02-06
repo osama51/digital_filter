@@ -52,8 +52,8 @@
       <tr>
         <td>
           <div style="width: fit-content; margin-left: auto; margin-right: auto;">
-            <button type="button" class="fileUpload btn btn-primary">Clear All</button>
-            <button type="button" class="fileUpload btn btn-primary">Apply Filter</button>
+            <button id="clear" type="button" class="fileUpload btn btn-primary">Clear All</button>
+            <button id="apply" type="button" class="fileUpload btn btn-primary">Apply Filter</button>
           </div>
         </td>
       </tr>
@@ -179,7 +179,7 @@
                 //a[i] = math.complex((poles[i].x-150.0)/120.0,(poles[i].y-150.0)/120.0)
                 ax[i] = ((poles[i].x-120.0)/100.0);
                 ay[i] = ((poles[i].y-120.0)/100.0);
-                console.log(ax[i])
+                //console.log(ax[i])
             }
             for (var i = 0; i < zeros.length; i++){
                 //b[i] = math.complex((zeros[i].x-150.0)/120.0,(zeros[i].y-150.0)/120.0)

@@ -10,9 +10,10 @@ document.getElementById("chart").style.resize = "both";
       $(document).ready(function() {
           
         $('#files').bind('change', handleFileSelect);
+        document.getElementById("apply").onclick = openfiltered;
         $.ajax({
           type: "GET",
-          url: "emg.csv",
+          url: "filteredemg.csv",
           dataType: "text",
           success: function(data) {preparedata(data);}
        });
@@ -36,7 +37,15 @@ document.getElementById("chart").style.resize = "both";
         //$('#list').append(output);
       }
 
+      
       function openfiltered(){
+        eel.difference_equ_z(amp);
+        var fetcher = 0;
+        console.log("openefiltered")
+        for (i = 0; i>50; i++){
+          console.log(fetcher);
+          fetcher++;
+        }
         $.ajax({
           type: "GET",
           url: "filteredemg.csv",
@@ -81,8 +90,6 @@ document.getElementById("chart").style.resize = "both";
           // newamp = data;
           for(var row in data) {
             newamp[row] = data[row][0];
-            
-
           }
         };
         // console.log(newamp)
@@ -178,30 +185,15 @@ document.getElementById("chart").style.resize = "both";
                 range: [-1,500]
               }
             });
-              
-
       var cnt = 0;
-      var fetcher = 0;
-      
+          
 
       setInterval( function(){
-        if (fetcher>200){
-
-          $.ajax({
-            type: "GET",
-            url: "filteredemg.csv",
-            dataType: "text",
-            success: function(data) {preparedata(data);}
-         });
-         fetcher = 0;
-        }
 
       //   newfile = new Blob([data], {
       //     type: 'text/csv; charset=utf-8;' 
       // });
       //   readnewFile(newfile);
-
-      
 
         //let newsignal = 0;
         if (flag){
@@ -214,13 +206,7 @@ document.getElementById("chart").style.resize = "both";
               }
             });
           }
-          if (fetcher >50){
-            
-            eel.difference_equ_z(amp);
-            fetcher = 0;
-          }
-          fetcher++;
-          console.log(fetcher)
+          
           //if (fetcher > 299 ){
             // if (newsignal != 0){
               // console.log("IM INNNNNNN ")
@@ -236,7 +222,5 @@ document.getElementById("chart").style.resize = "both";
               }
             });
           }
-            
-          
         }
       },1);
