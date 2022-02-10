@@ -1,14 +1,12 @@
-let bx;
-let by;
 let boxSize = 10;
 let overBox = false;
 let locked = false;
 let xOffset = 0.0;
 let yOffset = 0.0;
 let leftWall = 0;
-let rightWall = 240;
+let rightWall = 300;
 let topWall = 0;
-let bottomWall = 120;
+let bottomWall = 150;
 let overPoint = false;
 let overPole = false;
 let overZero= false;
@@ -21,13 +19,11 @@ var zeros = [];
 
 
 function setup() {
-    var myCanvas = createCanvas(240, 240);
+    var myCanvas = createCanvas(300, 300);
     myCanvas.mouseOver(mouseOverCnv);
     myCanvas.mouseOut(mouseOutCnv);
 
     myCanvas.parent("canvas");
-    bx = constrain(width / 2.0, leftWall, rightWall);
-    by = constrain(height / 2.0, leftWall, rightWall);
     
     rectMode(RADIUS);
     strokeWeight(2);
@@ -36,7 +32,7 @@ function setup() {
   var poleCheck = document.getElementById("poleCheck");
   var zeroCheck = document.getElementById("zeroCheck");
 
-  document.getElementById("clear").onclick = clearAll;
+  document.getElementById("clearpoints").onclick = clearAll;
   $(".tgl.tgl-skewed:not([checked])").on('change' , function(){
     $(".tgl.tgl-skewed").not(this).prop("checked" , false);
   });
@@ -47,15 +43,23 @@ class pole {
     constructor(x, y) {
         this.x = constrain(x, leftWall, rightWall);
         this.y = constrain(y, topWall, bottomWall);
-        this.conjx = width/2;
-        this.conjy = height/2;
+        this.conjx = x;
+        this.conjy = 300-y;
         this.xOffset = 0.0;
         this.yOffset = 0.0;
         this.locked = false; 
+        this.lockedconj = false;
         this.overBox = false;
+        this.overBoxconj = false;
     }
     
     display(){
+        // if (
+        //     mouseX > this.conjx - boxSize &&
+        //     mouseX < this.conjx + boxSize &&
+        //     mouseY > this.conjy - boxSize &&
+        //     mouseY < this.conjy + boxSize
+        // ){this.overBoxconj = true;} else{this.overBoxconj = false;}
         if (
             mouseX > this.x - boxSize &&
             mouseX < this.x + boxSize &&
@@ -63,7 +67,7 @@ class pole {
             mouseY < this.y + boxSize
             ) {
                 this.overBox = true;
-                if (!this.locked) {
+                if (!this.locked || !this.lockedconj) {
                     stroke(100);
                     fill(200, 200, 200);
                 }
@@ -78,8 +82,8 @@ class pole {
             line(this.x-5, this.y-5, this.x+5, this.y+5)
             line(this.x+5, this.y-5, this.x-5, this.y+5)
             //rect(this.x, 300-this.y, boxSize, boxSize);
-            line(this.x-5, 240-this.y-5, this.x+5, 240-this.y+5)
-            line(this.x+5, 240-this.y-5, this.x-5, 240-this.y+5)
+            line(this.x-5, 300-this.y-5, this.x+5, 300-this.y+5)
+            line(this.x+5, 300-this.y-5, this.x-5, 300-this.y+5)
             //console.log(overPoint)
         }
         
@@ -87,12 +91,19 @@ class pole {
             if (this.overBox) {
                 this.locked = true;
                 picked = true;
-                fill(255, 255, 255);
             } else {
                 this.locked = false;
             }
+            // if (this.overBoxconj) {
+            //     this.lockedconj = true;
+            //     fill(255, 255, 255);
+            // } else {
+            //     this.lockedconj = false;
+            // }
             this.xOffset = constrain(mouseX - this.x, leftWall, rightWall);
             this.yOffset = constrain(mouseY - this.y, topWall, bottomWall);
+            // this.conjxOffset = constrain(mouseX - this.conjx, leftWall, rightWall);
+            // this.conjyOffset = constrain(mouseY - this.conjy, topWall, bottomWall);
         }
         dragged(){
             var d = dist(mouseX, mouseY, this.x, this.y);
@@ -102,28 +113,41 @@ class pole {
                     this.x = constrain(mouseX - this.xOffset, leftWall, rightWall);
                     this.y = constrain(mouseY - this.yOffset, topWall, bottomWall);
                 }
+                // else if (this.lockedconj){
+                    this.conjx = this.x;
+                    this.conjy = 300-this.y;
+                //     }
+                }
             }
         }
-    }
+    
     
 class zero {
         constructor(x, y) {
             this.x = constrain(x, leftWall, rightWall);
             this.y = constrain(y, topWall, bottomWall);
-            this.conjx = width/2;
-            this.conjy = height/2;
+            this.conjx = x;
+            this.conjy = 300-y;
             this.xOffset = 0.0;
             this.yOffset = 0.0;
             this.locked = false; 
+            this.lockedconj = false;
             this.overBox = false;
+            this.overBoxconj = false;
         }
         
         display(){
+            // if (
+            //     mouseX > this.conjx - boxSize &&
+            //     mouseX < this.conjx + boxSize &&
+            //     mouseY > this.conjy - boxSize &&
+            //     mouseY < this.conjy + boxSize
+            // ){this.overBoxconj = true;} else{this.overBoxconj = false;}
             if (
                 mouseX > this.x - boxSize &&
                 mouseX < this.x + boxSize &&
                 mouseY > this.y - boxSize &&
-                mouseY < this.y + boxSize
+                mouseY < this.y + boxSize 
                 ) {
                     this.overBox = true;
                     if (!this.locked) {
@@ -135,22 +159,30 @@ class zero {
                     fill(96, 96, 96);
                     this.overBox = false;
                 }
-                
+
                 // Draw the box
                 ellipse(this.x, this.y, boxSize, boxSize);
-                ellipse(this.x, 240-this.y, boxSize, boxSize);
+                ellipse(this.x, 300-this.y, boxSize, boxSize);
     }
     
     clicked(){
         if (this.overBox) {
             this.locked = true;
             picked = true;
-            fill(255, 255, 255);
         } else {
             this.locked = false;
         }
+        // if (this.overBoxconj) {
+        //     this.lockedconj = true;
+        //     fill(255, 255, 255);
+        // } else {
+        //     this.lockedconj = false;
+        // }
+
         this.xOffset = constrain(mouseX - this.x, leftWall, rightWall);
         this.yOffset = constrain(mouseY - this.y, topWall, bottomWall);
+        // this.conjxOffset = constrain(mouseX - this.conjx, leftWall, rightWall);
+        // this.conjyOffset = constrain(300 - mouseY - this.conjy, topWall, bottomWall);
     }
     dragged(){
         var d = dist(mouseX, mouseY, this.x, this.y);
@@ -160,9 +192,14 @@ class zero {
                 this.x = constrain(mouseX - this.xOffset, leftWall, rightWall);
                 this.y = constrain(mouseY - this.yOffset, topWall, bottomWall);
             }
+            // else if (this.lockedconj){
+               this.conjx = this.x;
+               this.conjy = 300-this.y;
+            // }
+            }
         }
     }
-}
+
 
 function draw() {
     background(255,255,255);
@@ -170,7 +207,14 @@ function draw() {
     fill("#FFFFFF");
     stroke(20);
     strokeWeight(2);
-    circle(120, 120, 200);
+    circle(150, 150, 200);
+    // for(let i = 2; i < 6; i++){
+    //     line((width/2)-(100*Math.cos(3.14/(12/i))), (height/2)-(100*Math.sin(3.14/(12/i))), (width/2)+(100*Math.cos(3.14/(12/i))), (height/2)+(100*Math.sin(3.14/(12/i))))
+    // }
+    //line((width/2)+(100*Math.cos(3.14/(12/1))), (height/2)+(100*Math.sin(3.14/(12/1))), (width/2)-(100*Math.cos(3.14/(12/1))), (height/2)-(100*Math.sin(3.14/(12/1))))
+    // line((width/2)+(100*Math.cos(3.14/(12/2))), (height/2)+(100*Math.sin(3.14/(12/2))), (width/2)-(100*Math.cos(3.14/(12/2))), (height/2)-(100*Math.sin(3.14/(12/2))))
+    // line((width/2)-(100*Math.cos(3.14/(12/3))), (height/2)+(100*Math.sin(3.14/(12/3))), (width/2)+(100*Math.cos(3.14/(12/3))), (height/2)-(100*Math.sin(3.14/(12/3))))
+    // line((width/2)-(100*Math.cos(3.14/(12/5))), (height/2)+(100*Math.sin(3.14/(12/5))), (width/2)+(100*Math.cos(3.14/(12/5))), (height/2)-(100*Math.sin(3.14/(12/5))))
     
     translate(width/2,height/2)
     //primary axes
@@ -191,8 +235,6 @@ function draw() {
     if (zeroCheck.checked == true) {
         if(poleCheck.checked == true){poleCheck.checked= false;}
     }
-
-
 }
 
 function mouseOverCnv(){
@@ -203,34 +245,17 @@ function mouseOutCnv(){
     overCanvas = false;
 }
 
-// function selectable(mode){
-//     if (mode == 'zero'){
-//         if (zeroButton){
-//             zeroButton = false;
-//         }else{
-//             zeroButton = true;
-//         }
-//     }
-//     if (mode == 'pole'){
-//         if (poleButton){
-//             poleButton = false;
-//         }else{poleButton = true;
-//         }
-//     }
-// }
 function checkOverPoint(){
     for (var i = 0; i < zeros.length; i++){
         
-            if (zeros[i].overBox){
+            if (zeros[i].overBox || zeros[i].overBoxconj){
                 overZero = true;
                 break;
             }else{ overZero = false;}
-        
-        
     }
     for (var i = 0; i < poles.length; i++){
         
-            if(poles[i].overBox){
+            if(poles[i].overBox || poles[i].overBoxconj){
                 overPole = true;
                 break;
             }else{ overPole = false;}
@@ -255,7 +280,6 @@ function appendZero() {
 
 function mousePressed() {
     if (poleCheck.checked == true) {
-
         appendPole();
     }
 
@@ -319,20 +343,6 @@ function drawTickAxes(lineColor,thickness,spacing,xoffset,yoffset) {
     push();
       translate(this.xoffset,this.yoffset)
     stroke(this.lineColor)
-    // for (var i = 0; i<height/2; i+=this.spacing){
-      
-    //       //vertical tickmarks
-    //       stroke(this.lineColor)
-    //       strokeWeight(this.thickness);
-    //      line(+2,i,-2,i)
-    //      line(+2,-i,-2,-i)
-        
-    //         //horizontal tickmarks
-    //       stroke(this.lineColor)
-    //       strokeWeight(this.thickness);
-    //      line(i,+3,i,-3)
-    //      line(-i,+3,-i,-3)
-    // }
 
     stroke(this.lineColor)
     strokeWeight(this.thickness);

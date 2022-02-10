@@ -40,20 +40,46 @@
       
       <tr>
         <td style="width: 30%;"><div id="canvas" style="width: fit-content; margin-left: auto; margin-right: auto;"></div></td>
-        <td style="width: 150px; margin-left: auto; margin-right: auto;">
-          <h4 style="width: fit-content;">Conjugate Pole</h4> 
-          <input id="poleCheck" class="tgl tgl-skewed" type="checkbox">
-          <label class="tgl-btn" data-tg-off = "ADD", data-tg-on = "STOP", for = "poleCheck"></label>
-          <h4 style="width: fit-content;">Conjugate Zero</h4> 
-          <input id="zeroCheck" class="tgl tgl-skewed" type="checkbox">
-          <label class="tgl-btn" data-tg-off = "ADD", data-tg-on = "STOP", for = "zeroCheck"></label>
+        <td style="margin-left: auto; margin-right: auto; overflow: -moz-hidden-unscrollable;">
+          <table style="width: 100%;">
+            <td style="margin-left: auto; margin-right: 10px; overflow: -moz-hidden-unscrollable;">
+              <h4 style="width: fit-content;">Conjugate Pole</h4> 
+              <input id="poleCheck" class="tgl tgl-skewed" type="checkbox">
+              <label class="tgl-btn" data-tg-off = "ADD", data-tg-on = "STOP", for = "poleCheck"></label>
+              <h4 style="width: fit-content;">Conjugate Zero</h4> 
+              <input id="zeroCheck" class="tgl tgl-skewed" type="checkbox">
+              <label class="tgl-btn" data-tg-off = "ADD", data-tg-on = "STOP", for = "zeroCheck"></label>
+
+            </td>
+            <td style="margin-left: auto; margin-right: auto; overflow: -moz-hidden-unscrollable;">
+              <!-- combobox -->
+              <label for="cars">Predefined Filters</label>
+              <select name="cars" id="cars">
+                <option value="volvo">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="opel">Opel</option>
+                <option value="custom">Custom</option>
+              </select>
+              <br><br>
+              <div class="fileUpload btn btn-primary">
+                <span>Add</span>
+                <input type="button" class='upload'>
+              </div>
+            </td>
+          </table>
         </td>
       </tr>
       <tr>
         <td>
           <div style="width: fit-content; margin-left: auto; margin-right: auto;">
-            <button id="clear" type="button" class="fileUpload btn btn-primary">Clear All</button>
+            <button id="clearpoints" type="button" class="fileUpload btn btn-primary">Clear All</button>
             <button id="apply" type="button" class="fileUpload btn btn-primary">Apply Filter</button>
+          </div>
+        </td>
+        <td>
+          <div class="slidecontainer">
+            <p style="width: fit-content; float: left;">Filter Speed</p> 
+            <input type="range" min="1" max="100" value="8" class="sliderr" id="myRange">
           </div>
         </td>
       </tr>
@@ -80,15 +106,20 @@
           </div>
         </td>
       </tr>
+      
+    </table>
+    <table class="center" style="width: 835px;">
       <tr>
-        <td>
+        <td style="width: 100%;">
           <div class="float-child">
-            <div class="graph" id="chart" style="position: relative; left: 5px;"></div>
+            <div id="chart" style="height: 250px; position: relative; left: 5px;"></div>
           </div>
         </td>
-        <td>
+      </tr>
+      <tr>
+        <td style="width: 100%;">
           <div class="float-child">
-            <div class="graph" id="chart2" style="position: relative; left: 5px;"></div>
+            <div id="chart2" style="height: 250px; position: relative; left: 5px;"></div>
           </div>
         </td>
       </tr>
@@ -174,17 +205,23 @@
             // h_phase = [];
             // h_dB = [];
             
-            for (var i = 0; i < poles.length; i++){
+            for (var i = 0; i < poles.length*2; i+=2){
               // console.log(poles[i].x)
                 //a[i] = math.complex((poles[i].x-150.0)/120.0,(poles[i].y-150.0)/120.0)
-                ax[i] = ((poles[i].x-120.0)/100.0);
-                ay[i] = ((poles[i].y-120.0)/100.0);
+                ax[i] = ((poles[i/2].x-150.0)/100.0);
+                ay[i] = ((150.0-zeros[i/2].y)/100.0);
+                ax[i+1] = ((poles[i/2].conjx-150.0)/100.0);
+                ay[i+1] = ((150.0-poles[i/2].conjy)/100.0);
                 //console.log(ax[i])
             }
-            for (var i = 0; i < zeros.length; i++){
+            for (var i = 0; i < zeros.length*2; i+=2){
                 //b[i] = math.complex((zeros[i].x-150.0)/120.0,(zeros[i].y-150.0)/120.0)
-                bx[i] = ((zeros[i].x-120.0)/100.0);
-                by[i] = ((zeros[i].y-120.0)/100.0);
+                bx[i] = ((zeros[i/2].x-150.0)/100.0);
+                by[i] = ((150.0-zeros[i/2].y)/100.0);
+                bx[i+1] = ((zeros[i/2].conjx-150.0)/100.0);
+                by[i+1] = ((150.0-zeros[i/2].conjy)/100.0);
+                console.log('by', by[0])
+
             }
             //console.log("amp", amp)
             let w = await eel.W(bx, by, ax, ay)();

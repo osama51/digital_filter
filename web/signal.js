@@ -3,6 +3,8 @@ document.getElementById("chart").style.resize = "both";
         var time = Array(50861).fill(0.0);
         var newamp = Array(50861).fill(0.0);
         let flag = 0;
+        let apply = false;
+        let accumulator = [];
         amp[0] = amp[1];
         time[0] = 0;
 
@@ -10,17 +12,21 @@ document.getElementById("chart").style.resize = "both";
       $(document).ready(function() {
           
         $('#files').bind('change', handleFileSelect);
-        document.getElementById("apply").onclick = openfiltered;
+        document.getElementById("files").onclick = handleFile;
+        document.getElementById("apply").onclick = apply_filter;
+        
         $.ajax({
           type: "GET",
-          url: "filteredemg.csv",
+          url: "filteredemg2.csv",
           dataType: "text",
           success: function(data) {preparedata(data);}
        });
         
       });
 
-
+      function handleFile(){
+        $('#files').bind('change', handleFileSelect);
+      }
       function handleFileSelect(evt) {
         var files = evt.target.files; // FileList object
         var file = files[0];
@@ -37,12 +43,18 @@ document.getElementById("chart").style.resize = "both";
         //$('#list').append(output);
       }
 
-      
+      function apply_filter(){
+        eel.apply_filter()
+        apply = true;
+      }
+
       function openfiltered(){
-        eel.difference_equ_z(amp);
+        //eel.difference_equ_z(amp);
+        eel.dfilter(amp);
         var fetcher = 0;
-        console.log("openefiltered")
-        for (i = 0; i>50; i++){
+        console.log("openfiltered")
+
+        for (i = 0; i>100; i++){
           console.log(fetcher);
           fetcher++;
         }
@@ -51,28 +63,32 @@ document.getElementById("chart").style.resize = "both";
           url: "filteredemg.csv",
           dataType: "text",
           success: function(data) {preparedata(data);}
-       });
+        });
       }
       
-      function preparedata(data){
-        
+      function preparedata(data){        
         newfile = new Blob([data], {
           type: 'text/csv; charset=utf-8;' 
       });
         readnewFile(newfile);
+
+        console.log('counter', 2, amp.slice((2),((2)+8)))
       }
 
       function readFile(file) {
+        
         var reader = new FileReader();
         reader.readAsText(file);
         reader.onload = function(event){
           var csv = event.target.result;
           var data = $.csv.toArrays(csv);
           //var html = '';
-          
+          if (data[0][0] > 0.001){
+            divider = 1000;
+          }else{divider=1}
           for(var row in data) {
-            time[row] = data[row][0]*1000;
-            amp[row] = data[row][1]*1000;
+            time[row] = data[row][0]*divider;
+            amp[row] = data[row][1]*1;
           }
         };
         reader.onerror = function(){ alert('Unable to read ' + file.fileName); };
@@ -114,7 +130,7 @@ document.getElementById("chart").style.resize = "both";
           },
         },
         yaxis: {
-          title: 'EMG Signal (mV)',
+          title: 'EMG Signal (V)',
           titlefont: {
             family: 'Arial, sans-serif',
             size: 12,
@@ -145,7 +161,7 @@ document.getElementById("chart").style.resize = "both";
           },
         },
         yaxis: {
-          title: 'EMG Signal (mV)',
+          title: 'EMG Signal (V)',
           titlefont: {
             family: 'Arial, sans-serif',
             size: 12,
@@ -169,7 +185,7 @@ document.getElementById("chart").style.resize = "both";
 
       Plotly.relayout('chart',{
               xaxis: {
-                range: [-1,500]
+                range: [-1,2]
               }
             });
 
@@ -182,45 +198,55 @@ document.getElementById("chart").style.resize = "both";
 
       Plotly.relayout('chart2',{
               xaxis: {
-                range: [-1,500]
+                range: [-1,2]
               }
             });
       var cnt = 0;
-          
-
+          let filter_samples = 8;
       setInterval( function(){
+        var slider = document.getElementById("myRange");
+        const new_filter_samples = slider.value*1;
+        const samples = 100;
+        data = amp.slice((samples*cnt),((samples*cnt)+filter_samples));
 
-      //   newfile = new Blob([data], {
-      //     type: 'text/csv; charset=utf-8;' 
-      // });
-      //   readnewFile(newfile);
+        // if (data.length < Math.max(zeros.length,poles.length)){
+        //   accumulator += data;
+        //   if(accumulator > Math.max(zeros.length,poles.length)){
+        //     eel.dfilter(accumulator, apply);
+        //     accumulator.length = 0
+        //   }
+        // }else{eel.dfilter(data, apply);}
+        eel.dfilter(data, apply);
+        //apply = false;
+        $.ajax({
+          type: "GET",
+          url: "filteredemg.csv",
+          dataType: "text",
+          success: function(data) {preparedata(data);}
+        });
 
         //let newsignal = 0;
         if (flag){
-          Plotly.extendTraces('chart',{ y:[amp.slice((8*cnt),(8*cnt+8))], x:[time.slice((8*cnt),(8*cnt+8))]}, [0]);
-          
-          if(cnt > 250 && cnt < 10000) {
+          Plotly.extendTraces('chart',{ y:[amp.slice((samples*cnt),(samples*cnt+samples))], x:[time.slice((samples*cnt),((samples*cnt)+samples))]}, [0]);
+          cnt++;
+          if(cnt > 20 && cnt < 10000) {
             Plotly.relayout('chart',{
               xaxis: {
-                range: [time[8*cnt-2000], time[8*cnt]]
+                range: [time[samples*cnt-(20*samples)], time[samples*cnt]]
               }
             });
           }
-          
-          //if (fetcher > 299 ){
-            // if (newsignal != 0){
-              // console.log("IM INNNNNNN ")
-              // fetcher = 0;
-              //console.log(newsignal)
+          if (filter_samples/samples < cnt){
+            Plotly.extendTraces('chart2',{ y:[newamp.slice((0),(filter_samples))], x:[time.slice(((filter_samples*cnt)-filter_samples),(filter_samples*cnt))]}, [0]);
               
-              Plotly.extendTraces('chart2',{ y:[newamp.slice((8*cnt),(8*cnt+8))], x:[time.slice((8*cnt),(8*cnt+8))]}, [0]);
-              cnt++;
-          if(cnt > 250 && cnt < 10000) {
+          if(cnt > 20 && cnt < 10000) {
             Plotly.relayout('chart2',{
               xaxis: {
-                range: [time[8*cnt-2000], time[8*cnt]]
+                range: [time[filter_samples*cnt-(21*filter_samples)], time[filter_samples*(cnt-1)]]
               }
             });
           }
         }
-      },1);
+      }
+      filter_samples = new_filter_samples;
+      },1000);
