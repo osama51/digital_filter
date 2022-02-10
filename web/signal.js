@@ -207,8 +207,9 @@ document.getElementById("chart").style.resize = "both";
         var slider = document.getElementById("myRange");
         const new_filter_samples = slider.value*1;
         const samples = 100;
-        data = amp.slice((samples*cnt),((samples*cnt)+filter_samples));
-
+        data = amp.slice((samples*cnt),((samples*cnt)+new_filter_samples));
+        firstindex = (samples*cnt);
+        seecondindex = ((samples*cnt)+new_filter_samples);
         // if (data.length < Math.max(zeros.length,poles.length)){
         //   accumulator += data;
         //   if(accumulator > Math.max(zeros.length,poles.length)){
@@ -237,12 +238,12 @@ document.getElementById("chart").style.resize = "both";
             });
           }
           if (filter_samples/samples < cnt){
-            Plotly.extendTraces('chart2',{ y:[newamp.slice((0),(filter_samples))], x:[time.slice(((filter_samples*cnt)-filter_samples),(filter_samples*cnt))]}, [0]);
-              
-          if(cnt > 20 && cnt < 10000) {
+            Plotly.extendTraces('chart2',{ y:[newamp.slice((0),(filter_samples))], x:[time.slice((firstindex,seecondindex))]}, [0]);
+              console.log('TIME', time[new_filter_samples*cnt-(20*new_filter_samples)]- time[new_filter_samples*cnt])
+          if(cnt > 21 && cnt < 10000) {
             Plotly.relayout('chart2',{
               xaxis: {
-                range: [time[filter_samples*cnt-(21*filter_samples)], time[filter_samples*(cnt-1)]]
+                range: [time[new_filter_samples*cnt-(21*new_filter_samples)], time[new_filter_samples*cnt]]
               }
             });
           }

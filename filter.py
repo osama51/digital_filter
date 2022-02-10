@@ -130,8 +130,8 @@ def dfilter(data, apply):
     # else: filtered = signal.lfilter([1], [1] ,data)
     exporting_to_csv(filtered)
     # print("new", filtered[0:50])
-    print('h_dB', h_dB)
-    return (filtered/max(h_dB))
+    # print('h_dB', h_dB)
+    return (filtered/np.max(h_dB))
   
 def exporting_to_csv(data):
     # data = {'time': list(np.arange(0,1000,1)),'signal': self.composer_list }
