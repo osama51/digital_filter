@@ -36,6 +36,7 @@ function setup() {
   $(".tgl.tgl-skewed:not([checked])").on('change' , function(){
     $(".tgl.tgl-skewed").not(this).prop("checked" , false);
   });
+  document.getElementById("addAP").onclick = all_pass;
 
 }
 
@@ -352,7 +353,33 @@ function drawTickAxes(lineColor,thickness,spacing,xoffset,yoffset) {
     line(0,height/2,0,-height/2)
   
     pop();
-  
+  }
+
+  function all_pass(){
+    var regex = /[+-]?\d+(\.\d+)?/g;
+    combobox = document.getElementById("allpass");
+    current_value = combobox.value;
+    if (current_value=="custom"){
+        var x = document.getElementById("realPart").value;
+        var y = document.getElementById("imgPart").value;
+        x = 100*x + 150
+        y = -100*y + 150
+        poles.push(new pole(x, y));
+        xz = x/(Math.pow(x,2) + Math.pow(y,2))
+        yz = y/(Math.pow(x,2) + Math.pow(y,2))
+        zeros.push(new zero(xz, yz));
+    }else{
+        var num = 0;
+        num = current_value.match(regex).map(function(v) { return parseFloat(v); });
+        num[0] = 100*num[0] + 150
+        num[1] = -100*num[1] + 150
+        xnumz = x/(Math.pow(num[0],2) + Math.pow(num[1],2))
+        ynumz = y/(Math.pow(num[0],2) + Math.pow(num[1],2))
+        poles.push(new pole(num[0], num[1]));
+        zeros.push(new zero(xnumz, ynumz));
+        console.log(num);
+
+    }
   }
 
   function clearAll(){

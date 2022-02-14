@@ -52,19 +52,41 @@
 
             </td>
             <td style="margin-left: auto; margin-right: auto; overflow: -moz-hidden-unscrollable;">
-              <!-- combobox -->
-              <label for="cars">Predefined Filters</label>
-              <select name="cars" id="cars">
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="opel">Opel</option>
-                <option value="custom">Custom</option>
-              </select>
+              <table class="center">
+                <tr>
+                  <td>
+                    <!-- combobox -->
+                    <label for="Filters">Predefined Filters</label>
+                    <select name="Filters" id="allpass">
+                      <option value="select">Select A Filter</option>
+                      <option value="0.6+0.5j">0.6+0.5j</option>
+                      <option value="0.3+0.3j">0.3+0.3j</option>
+                      <option value="0.4+0.25j">0.4+0.25j</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <button id="addAP" type="button" class="fileUpload btn btn-primary" style=" width: 150px;">Add All Pass</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label for="realPart">Real Part:</label>
+                    <input type="number" id="realPart" name="real" step="0.01" value="0">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label for="imgPart">Imaginary Part:</label>
+                    <input type="number" id="imgPart" name="imaginary" step="0.01" value="0">
+                  </td>
+                </tr>
+              </table>
+              
               <br><br>
-              <div class="fileUpload btn btn-primary">
-                <span>Add</span>
-                <input type="button" class='upload'>
-              </div>
+              
             </td>
           </table>
         </td>

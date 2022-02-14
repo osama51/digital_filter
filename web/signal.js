@@ -14,7 +14,7 @@ document.getElementById("chart").style.resize = "both";
         $('#files').bind('change', handleFileSelect);
         document.getElementById("files").onclick = handleFile;
         document.getElementById("apply").onclick = apply_filter;
-        
+                
         $.ajax({
           type: "GET",
           url: "filteredemg2.csv",
