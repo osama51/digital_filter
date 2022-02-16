@@ -10,6 +10,7 @@ let bottomWall = 150;
 let overPoint = false;
 let overPole = false;
 let overZero= false;
+let overAP = false;
 let overCanvas = false;
 let isOn = false;
 let picked = false;
