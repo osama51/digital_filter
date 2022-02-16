@@ -16,6 +16,7 @@ let picked = false;
 
 var poles = [];
 var zeros = [];
+var allpass_array = [];
 
 
 function setup() {
@@ -39,6 +40,131 @@ function setup() {
   document.getElementById("addAP").onclick = all_pass;
 
 }
+function px_to_unitcircle(x, y) {
+    var scaled_x = (x-150.0)/100.0; 
+    var scaled_y = (150.0-y)/100.0; 
+    return [scaled_x, scaled_y];
+}
+function unitcircle_to_px(x, y) {
+    var scaled_x = x*100.0 + 150.0;
+    var scaled_y = (y*-100.0) + 150.0;
+    return [scaled_x, scaled_y];
+}
+class allpass {
+    constructor(x, y) {        
+        this.x = x;
+        this.y = y;
+        this.zero_x = this.x/(Math.pow(this.x,2) + Math.pow(this.x,2));
+        this.zero_y = this.y/(Math.pow(this.y,2) + Math.pow(this.y,2));
+
+        this.scaled_x = constrain(unitcircle_to_px(this.x,0)[0], leftWall, rightWall);
+        this.scaled_y = constrain(unitcircle_to_px(0,this.y)[1], topWall, bottomWall);
+
+        this.scaled_zero_x = unitcircle_to_px(this.zero_x,0)[0];
+        this.scaled_zero_y = unitcircle_to_px(0,this.zero_y)[1];
+        
+        // this.scaled_x = constrain((this.x*100.0) + 150.0, 
+        //         Math.cos(Math.atan2((this.x*100.0) + 150.0,(this.y*-100.0) + 150.0)), 
+        //         Math.cos(Math.atan2((this.x*100.0) + 150.0,(this.y*-100.0) + 150.0))); //setting the unit circle as constrain
+    
+        // this.scaled_y = constrain(((this.y*-100.0) + 150.0), 
+        //         Math.sin(Math.atan2((this.x*100.0) + 150.0,(this.y*-100.0) + 150.0)), 
+        //         Math.sin(Math.atan2((this.x*100.0) + 150.0,(this.y*-100.0) + 150.0))); //setting the unit circle as constrain
+        this.conjx = this.scaled_x;
+        this.conjy = 300-this.scaled_y;
+        this.conjx_zero = this.scaled_zero_x;
+        this.conjy_zero = 300-this.scaled_zero_y;
+        this.xOffset = 0.0;
+        this.yOffset = 0.0;
+        this.locked = false; 
+        this.lockedconj = false;
+        this.overBox = false;
+        this.overBoxconj = false;
+    }
+
+    addPole() {
+        poles.push(new pole(this.scaled_x, this.scaled_y));
+    }
+    addZero() {
+        zeros.push(new zero(this.scaled_zero_x, this.scaled_zero_y));
+    }
+    display(){
+        if (
+            (mouseX > this.scaled_x - boxSize &&
+            mouseX < this.scaled_x + boxSize &&
+            mouseY > this.scaled_y - boxSize &&
+            mouseY < this.scaled_y + boxSize) ||
+            (mouseX > this.scaled_zero_x - boxSize &&
+            mouseX < this.scaled_zero_x + boxSize &&
+            mouseY > this.scaled_zero_y - boxSize &&
+            mouseY < this.scaled_zero_y + boxSize)
+            ) {
+                this.overBox = true;
+                if (!this.locked || !this.lockedconj) {
+                    stroke(100);
+                    fill(200, 200, 200);
+                }
+            } else {
+                stroke(0);
+                fill(96, 96, 96);
+                this.overBox = false;
+            }
+            
+            // Draw a Cross X
+            line(this.scaled_x-5, this.scaled_y-5, this.scaled_x+5, this.scaled_y+5)
+            line(this.scaled_x+5, this.scaled_y-5, this.scaled_x-5, this.scaled_y+5)
+
+            line(this.scaled_x-5, 300-this.scaled_y-5, this.scaled_x+5, 300-this.scaled_y+5)
+            line(this.scaled_x+5, 300-this.scaled_y-5, this.scaled_x-5, 300-this.scaled_y+5)
+            
+            // Draw a Circle
+            ellipse(this.scaled_zero_x, this.scaled_zero_y, boxSize, boxSize);
+            ellipse(this.scaled_zero_x, 300-this.scaled_zero_y, boxSize, boxSize);
+        }
+        
+        clicked(){
+            if (this.overBox) {
+                this.locked = true;
+                picked = true;
+            } else {
+                this.locked = false;
+            }
+
+            this.xOffset = constrain(mouseX - this.scaled_x, leftWall, rightWall);
+            this.yOffset = constrain(mouseY - this.scaled_y, topWall, bottomWall);
+
+        }
+        dragged(){
+            var d = dist(mouseX, mouseY, this.scaled_x, this.scaled_y);
+            if (d < 12){
+                console.log("x", this.scaled_x, "y", this.scaled_y)
+                if (this.locked) {
+
+                    this.scaled_x = mouseX - this.xOffset;
+                    this.scaled_y = mouseY - this.yOffset;
+                    this.x = px_to_unitcircle(this.scaled_x,0)[0];
+                    this.y = px_to_unitcircle(0,this.scaled_y)[1];
+                    var magnigtude = sqrt(Math.pow(this.y,2) + Math.pow(this.x,2));
+                    if (magnigtude > 1) {
+                        this.x = this.x / magnigtude;
+                        this.y = this.y / magnigtude;
+                    }
+                    this.zero_x = this.x/(Math.pow(this.x,2) + Math.pow(this.y,2));
+                    this.zero_y = this.y/(Math.pow(this.x,2) + Math.pow(this.y,2));
+                    this.scaled_x = unitcircle_to_px(this.x,0)[0];
+                    this.scaled_y = unitcircle_to_px(0,this.y)[1];
+                    this.scaled_zero_x = unitcircle_to_px(this.zero_x,0)[0];
+                    this.scaled_zero_y = unitcircle_to_px(0,this.zero_y)[1];
+                }
+                // else if (this.lockedconj){
+                    this.conjx = this.scaled_x;
+                    this.conjy = 300-this.scaled_y;
+                    this.conjx_zero = this.scaled_zero_x;
+                    this.conjy_zero = 300-this.scaled_zero_y;
+                //     }
+                }
+            }
+    }
 
 class pole {
     constructor(x, y) {
@@ -78,11 +204,11 @@ class pole {
                 this.overBox = false;
             }
             
-            // Draw the box
-            //rect(this.x, this.y, boxSize, boxSize);
+            // Draw a Cross X
+
             line(this.x-5, this.y-5, this.x+5, this.y+5)
             line(this.x+5, this.y-5, this.x-5, this.y+5)
-            //rect(this.x, 300-this.y, boxSize, boxSize);
+
             line(this.x-5, 300-this.y-5, this.x+5, 300-this.y+5)
             line(this.x+5, 300-this.y-5, this.x-5, 300-this.y+5)
             //console.log(overPoint)
@@ -111,8 +237,19 @@ class pole {
             if (d < 12){
                 console.log("x", this.x, "y", this.y)
                 if (this.locked) {
-                    this.x = constrain(mouseX - this.xOffset, leftWall, rightWall);
-                    this.y = constrain(mouseY - this.yOffset, topWall, bottomWall);
+                    // this.x = constrain(mouseX - this.xOffset, leftWall, rightWall);
+                    // this.y = constrain(mouseY - this.yOffset, topWall, bottomWall);
+                    this.x = mouseX - this.xOffset;
+                    this.y = mouseY - this.yOffset;
+                    this.x = (this.x - 150)/100;
+                    this.y = (150 - this.y)/100;
+                    var magnigtude = sqrt(Math.pow(this.y,2) + Math.pow(this.x,2));
+                    if (magnigtude > 1) {
+                        this.x = this.x / magnigtude;
+                        this.y = this.y / magnigtude;
+                    }
+                    this.x = this.x*100 + 150;
+                    this.y = this.y*-100 + 150;
                 }
                 // else if (this.lockedconj){
                     this.conjx = this.x;
@@ -121,7 +258,6 @@ class pole {
                 }
             }
         }
-    
     
 class zero {
         constructor(x, y) {
@@ -161,7 +297,7 @@ class zero {
                     this.overBox = false;
                 }
 
-                // Draw the box
+                // Draw a Circle
                 ellipse(this.x, this.y, boxSize, boxSize);
                 ellipse(this.x, 300-this.y, boxSize, boxSize);
     }
@@ -201,7 +337,6 @@ class zero {
         }
     }
 
-
 function draw() {
     background(255,255,255);
     
@@ -229,6 +364,9 @@ function draw() {
     for (var i = 0; i < zeros.length; i++){
         zeros[i].display();
     }
+    for (var i = 0; i < allpass_array.length; i++){
+        allpass_array[i].display();
+    }
     
     if (poleCheck.checked == true) {
         if(zeroCheck.checked == true){zeroCheck.checked = false;}
@@ -247,22 +385,35 @@ function mouseOutCnv(){
 }
 
 function checkOverPoint(){
+    // var arrays = [zeros, poles, allpass_array];
+    // for (var n = 0; n >2; n++){
+    //     for (var i = 0; i < arrays[n].length; i++){
+    //         if (arrays[n][i].overBox || arrays[n][i].overBoxconj){
+    //             overPoint = true;
+    //             break;
+    //         }else{ overPoint = false;}
+    //     }
+    // }
     for (var i = 0; i < zeros.length; i++){
-        
             if (zeros[i].overBox || zeros[i].overBoxconj){
                 overZero = true;
                 break;
             }else{ overZero = false;}
     }
     for (var i = 0; i < poles.length; i++){
-        
             if(poles[i].overBox || poles[i].overBoxconj){
                 overPole = true;
                 break;
             }else{ overPole = false;}
     }
-    if (!overPole && !overZero){overPoint = false;}else{overPoint = true;}
-    if (poles.length == 0 && zeros.length == 0){overPoint = false;}
+    for (var i = 0; i < allpass_array.length; i++){
+        if(allpass_array[i].overBox || allpass_array[i].overBoxconj){
+            overAP = true;
+            break;
+        }else{ overAP = false;}
+}
+    if (!overPole && !overZero && !overAP){overPoint = false;}else{overPoint = true;}
+    if (poles.length == 0 && zeros.length == 0 && allpass_array.length == 0){overPoint = false;}
 }
 function appendPole() {
     checkOverPoint();
@@ -280,6 +431,7 @@ function appendZero() {
 }
 
 function mousePressed() {
+    console.log('X:', mouseX, 'Y:', mouseY);
     if (poleCheck.checked == true) {
         appendPole();
     }
@@ -298,6 +450,10 @@ function mousePressed() {
         zeros[i].clicked();
     }
     console.log("zeros", zeros.length)
+
+    for (var i = 0; i < allpass_array.length; i++){
+        allpass_array[i].clicked();
+    }
 }
 
 function mouseDragged() {
@@ -307,6 +463,10 @@ function mouseDragged() {
     
     for (var i = 0; i < zeros.length; i++){
         zeros[i].dragged();
+    }
+
+    for (var i = 0; i < allpass_array.length; i++){
+        allpass_array[i].dragged();
     }
 }
 
@@ -322,6 +482,12 @@ function doubleClicked() {
             zeros.splice(i,1);
         }
     }
+
+    for (var i = 0; i < allpass_array.length; i++){
+        if(allpass_array[i].overBox){
+            allpass_array.splice(i,1);
+        }
+    }
 }
 
 function mouseReleased() {
@@ -332,6 +498,10 @@ function mouseReleased() {
     
     for (var i = 0; i < zeros.length; i++){
         zeros[i].locked = false;
+    }
+
+    for (var i = 0; i < allpass_array.length; i++){
+        allpass_array[i].locked = false;
     }
 }
 
@@ -362,27 +532,30 @@ function drawTickAxes(lineColor,thickness,spacing,xoffset,yoffset) {
     if (current_value=="custom"){
         var x = document.getElementById("realPart").value;
         var y = document.getElementById("imgPart").value;
-        x = 100*x + 150
-        y = -100*y + 150
-        poles.push(new pole(x, y));
-        xz = x/(Math.pow(x,2) + Math.pow(y,2))
-        yz = y/(Math.pow(x,2) + Math.pow(y,2))
-        zeros.push(new zero(xz, yz));
+        // x = 100*x + 150
+        // y = -100*y + 150
+        // poles.push(new pole(x, y));
+        // xz = x/(Math.pow(x,2) + Math.pow(y,2))
+        // yz = y/(Math.pow(x,2) + Math.pow(y,2))
+        // zeros.push(new zero(xz, yz));
     }else{
         var num = 0;
         num = current_value.match(regex).map(function(v) { return parseFloat(v); });
-        num[0] = 100*num[0] + 150
-        num[1] = -100*num[1] + 150
-        xnumz = x/(Math.pow(num[0],2) + Math.pow(num[1],2))
-        ynumz = y/(Math.pow(num[0],2) + Math.pow(num[1],2))
-        poles.push(new pole(num[0], num[1]));
-        zeros.push(new zero(xnumz, ynumz));
-        console.log(num);
-
+        // num[0] = 100*num[0] + 150
+        // num[1] = -100*num[1] + 150
+        // xnumz = num[0]/(Math.pow(num[0],2) + Math.pow(num[1],2))
+        // ynumz = num[1]/(Math.pow(num[0],2) + Math.pow(num[1],2))
+        // poles.push(new pole(num[0], num[1]));
+        // zeros.push(new zero(xnumz, ynumz));
+        // console.log(num);
+        var x = num[0];
+        var y = num[1];
     }
+    allpass_array.push(new allpass(x,y));
   }
 
   function clearAll(){
     poles.length = 0;
     zeros.length = 0;
+    allpass_array.length = 0;
   }

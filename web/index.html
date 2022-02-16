@@ -219,10 +219,14 @@
           var cnt = 0;
           setInterval(async function(){
 
-            ax = new Array(poles.length).fill(0);
-            ay = new Array(poles.length).fill(0);
-            bx = new Array(zeros.length).fill(0);
-            by = new Array(zeros.length).fill(0);
+            // ax = new Array(poles.length).fill(0);
+            // ay = new Array(poles.length).fill(0);
+            // bx = new Array(zeros.length).fill(0);
+            // by = new Array(zeros.length).fill(0);
+            ax = [];
+            ay = [];
+            bx = [];
+            by = [];
 
             // h_phase = [];
             // h_dB = [];
@@ -230,22 +234,32 @@
             for (var i = 0; i < poles.length*2; i+=2){
               // console.log(poles[i].x)
                 //a[i] = math.complex((poles[i].x-150.0)/120.0,(poles[i].y-150.0)/120.0)
-                ax[i] = ((poles[i/2].x-150.0)/100.0);
-                ay[i] = ((150.0-zeros[i/2].y)/100.0);
-                ax[i+1] = ((poles[i/2].conjx-150.0)/100.0);
-                ay[i+1] = ((150.0-poles[i/2].conjy)/100.0);
+                ax.push((poles[i/2].x-150.0)/100.0);
+                ay.push((150.0-poles[i/2].y)/100.0);
+                ax.push((poles[i/2].conjx-150.0)/100.0);
+                ay.push((150.0-poles[i/2].conjy)/100.0);
                 //console.log(ax[i])
             }
             for (var i = 0; i < zeros.length*2; i+=2){
                 //b[i] = math.complex((zeros[i].x-150.0)/120.0,(zeros[i].y-150.0)/120.0)
-                bx[i] = ((zeros[i/2].x-150.0)/100.0);
-                by[i] = ((150.0-zeros[i/2].y)/100.0);
-                bx[i+1] = ((zeros[i/2].conjx-150.0)/100.0);
-                by[i+1] = ((150.0-zeros[i/2].conjy)/100.0);
+                bx.push((zeros[i/2].x-150.0)/100.0);
+                by.push((150.0-zeros[i/2].y)/100.0);
+                bx.push((zeros[i/2].conjx-150.0)/100.0);
+                by.push((150.0-zeros[i/2].conjy)/100.0);
                 console.log('by', by[0])
+            }
+            for (var i = 0; i < allpass_array.length*2; i+=2){
+                ax.push(allpass_array[i/2].x);
+                ay.push(allpass_array[i/2].y);
+                ax.push(( allpass_array[i/2].conjx-150.0)/100.0);
+                ay.push((150.0- allpass_array[i/2].conjy)/100.0);
+
+                bx.push(allpass_array[i/2].zero_x);
+                by.push(allpass_array[i/2].zero_y);
+                bx.push(( allpass_array[i/2].conjx_zero-150.0)/100.0);
+                by.push((150.0- allpass_array[i/2].conjy_zero)/100.0);
 
             }
-            //console.log("amp", amp)
             let w = await eel.W(bx, by, ax, ay)();
             let h_dB = await eel.plot_freqz(bx, by, ax, ay)();
             let h_phase = await  eel.plot_phasez(bx, by, ax, ay)();
