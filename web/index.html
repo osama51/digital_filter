@@ -101,7 +101,7 @@
         <td>
           <div class="slidecontainer">
             <p style="width: fit-content; float: left;">Filter Speed</p> 
-            <input type="range" min="1" max="100" value="8" class="sliderr" id="myRange">
+            <input type="range" min="1" max="50" value="50" class="sliderr" id="myRange">
           </div>
         </td>
       </tr>
@@ -283,21 +283,25 @@
               type:'scatter'
             }], layout2);
             
-            //let newsignal = await eel.difference_equ_z(amp)();
-            //console.log(newsignal)
-            console.log("slamao3leko!!!")
             Plotly.relayout('chart3',{
               xaxis: {
                       range: [0,3.2]
                     },
-              
+              yaxis: {
+                // autorange:true
+                range: [-55, 55]
+              }
               });
-              Plotly.relayout('chart4',{
+
+            Plotly.relayout('chart4',{
               xaxis: {
-                      range: [0,3.2]
-                    },
-              
-              });
+                    range: [0,3.2]
+                  },
+              yaxis: {
+                // autorange:true
+                range: [-3.2,3.2]
+              }
+            });
           },300);
       </script>
     </body>

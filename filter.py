@@ -47,7 +47,6 @@ def W(bx, by, ax=1, ay=1):
     print('a', a)
     a = P.polyfromroots(a) 
     
-    # print("a", a, "b", b)
     w,h = signal.freqz(b,a)
     w = list(w)
     return w;
@@ -114,34 +113,22 @@ def difference_equ_z(data):
     
 @eel.expose
 def dfilter(data, apply):
-    # print("ya mosahel")
-    # print("old", data[0:50])
-    
-    # a1 = a[::-1]
-    # b1 = b[::-1]
     if (apply):
-        
-        zi = signal.lfilter_zi(bb, aa)        
-        filtered,_ = signal.lfilter(bb,aa,data,zi=zi*data[0])
-        filtered,_ = signal.lfilter(bb,aa,filtered,zi=zi*filtered[0])
+        # zi = signal.lfilter_zi(bb, aa)        
+        # filtered,_ = signal.lfilter(bb,aa,data,zi=zi*data[0])
+        # filtered,_ = signal.lfilter(bb,aa,filtered,zi=zi*filtered[0])
+        filtered = signal.lfilter(bb,aa,data)
+        # filtered = signal.lfilter(bb,aa,filtered)
         filtered = np.real(filtered)
     else:
         filtered = data
-    # else: filtered = signal.lfilter([1], [1] ,data)
+
     exporting_to_csv(filtered)
-    # print("new", filtered[0:50])
-    # print('h_dB', h_dB)
     return filtered
   
 def exporting_to_csv(data):
-    # data = {'time': list(np.arange(0,1000,1)),'signal': self.composer_list }
-    # print("im exporting, my lord!")
     df = pd.DataFrame(data)
-    # name = QFileDialog.getSaveFileName(self, 'Save File')
     df.to_csv ("web/filteredemg.csv", index = False, header=False)
     
-# plot_freqz(b,a)
-# plot_phasez(b,a)
-# print(b)
-# # Start the index.html file
+
 eel.start("index.html")

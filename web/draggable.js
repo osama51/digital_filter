@@ -275,12 +275,6 @@ class zero {
         }
         
         display(){
-            // if (
-            //     mouseX > this.conjx - boxSize &&
-            //     mouseX < this.conjx + boxSize &&
-            //     mouseY > this.conjy - boxSize &&
-            //     mouseY < this.conjy + boxSize
-            // ){this.overBoxconj = true;} else{this.overBoxconj = false;}
             if (
                 mouseX > this.x - boxSize &&
                 mouseX < this.x + boxSize &&
@@ -310,17 +304,11 @@ class zero {
         } else {
             this.locked = false;
         }
-        // if (this.overBoxconj) {
-        //     this.lockedconj = true;
-        //     fill(255, 255, 255);
-        // } else {
-        //     this.lockedconj = false;
-        // }
+
 
         this.xOffset = constrain(mouseX - this.x, leftWall, rightWall);
         this.yOffset = constrain(mouseY - this.y, topWall, bottomWall);
-        // this.conjxOffset = constrain(mouseX - this.conjx, leftWall, rightWall);
-        // this.conjyOffset = constrain(300 - mouseY - this.conjy, topWall, bottomWall);
+
     }
     dragged(){
         var d = dist(mouseX, mouseY, this.x, this.y);
@@ -345,14 +333,7 @@ function draw() {
     stroke(20);
     strokeWeight(2);
     circle(150, 150, 200);
-    // for(let i = 2; i < 6; i++){
-    //     line((width/2)-(100*Math.cos(3.14/(12/i))), (height/2)-(100*Math.sin(3.14/(12/i))), (width/2)+(100*Math.cos(3.14/(12/i))), (height/2)+(100*Math.sin(3.14/(12/i))))
-    // }
-    //line((width/2)+(100*Math.cos(3.14/(12/1))), (height/2)+(100*Math.sin(3.14/(12/1))), (width/2)-(100*Math.cos(3.14/(12/1))), (height/2)-(100*Math.sin(3.14/(12/1))))
-    // line((width/2)+(100*Math.cos(3.14/(12/2))), (height/2)+(100*Math.sin(3.14/(12/2))), (width/2)-(100*Math.cos(3.14/(12/2))), (height/2)-(100*Math.sin(3.14/(12/2))))
-    // line((width/2)-(100*Math.cos(3.14/(12/3))), (height/2)+(100*Math.sin(3.14/(12/3))), (width/2)+(100*Math.cos(3.14/(12/3))), (height/2)-(100*Math.sin(3.14/(12/3))))
-    // line((width/2)-(100*Math.cos(3.14/(12/5))), (height/2)+(100*Math.sin(3.14/(12/5))), (width/2)+(100*Math.cos(3.14/(12/5))), (height/2)-(100*Math.sin(3.14/(12/5))))
-    
+
     translate(width/2,height/2)
     //primary axes
     drawTickAxes(20,0.7,12.2,0,0)
@@ -386,15 +367,7 @@ function mouseOutCnv(){
 }
 
 function checkOverPoint(){
-    // var arrays = [zeros, poles, allpass_array];
-    // for (var n = 0; n >2; n++){
-    //     for (var i = 0; i < arrays[n].length; i++){
-    //         if (arrays[n][i].overBox || arrays[n][i].overBoxconj){
-    //             overPoint = true;
-    //             break;
-    //         }else{ overPoint = false;}
-    //     }
-    // }
+
     for (var i = 0; i < zeros.length; i++){
             if (zeros[i].overBox || zeros[i].overBoxconj){
                 overZero = true;
@@ -533,22 +506,10 @@ function drawTickAxes(lineColor,thickness,spacing,xoffset,yoffset) {
     if (current_value=="custom"){
         var x = document.getElementById("realPart").value;
         var y = document.getElementById("imgPart").value;
-        // x = 100*x + 150
-        // y = -100*y + 150
-        // poles.push(new pole(x, y));
-        // xz = x/(Math.pow(x,2) + Math.pow(y,2))
-        // yz = y/(Math.pow(x,2) + Math.pow(y,2))
-        // zeros.push(new zero(xz, yz));
+
     }else{
         var num = 0;
         num = current_value.match(regex).map(function(v) { return parseFloat(v); });
-        // num[0] = 100*num[0] + 150
-        // num[1] = -100*num[1] + 150
-        // xnumz = num[0]/(Math.pow(num[0],2) + Math.pow(num[1],2))
-        // ynumz = num[1]/(Math.pow(num[0],2) + Math.pow(num[1],2))
-        // poles.push(new pole(num[0], num[1]));
-        // zeros.push(new zero(xnumz, ynumz));
-        // console.log(num);
         var x = num[0];
         var y = num[1];
     }
