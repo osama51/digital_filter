@@ -1,11 +1,15 @@
 # Digital Filter
 
-* Missing All-Pass filters and the displayed filtered signal doesn't make sense.
+* The app is fully functioning 
+
+ *README will be updated later*
 
 ## Samples
 
-<p float="left">
-    <img src="web/images/sample01.PNG" width="410" height="400"/>
+<p align="center">
+    <img src="web/images/sample03.PNG" width="470" height="520"/><br><br>
+    <img src="web/images/Screenshot (5321).PNG" width="470" height="590"/><br><br>
+    <img src="web/images/Screenshot (5326)-2.PNG" width="470" height="520"/><br><br>
 </p>
 
 ## Note
