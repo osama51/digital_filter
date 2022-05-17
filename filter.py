@@ -40,11 +40,11 @@ def W(bx, by, ax=1, ay=1):
     global bz
     global az
     b = list(map(lambda x, y: complex(x, y), bx, by))
-    print('b', b)
+    # print('b', b)
     b = P.polyfromroots(b)
 
     a = list(map(lambda x, y: complex(x, y), ax, ay))
-    print('a', a)
+    # print('a', a)
     a = P.polyfromroots(a) 
     
     w,h = signal.freqz(b,a)
