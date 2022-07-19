@@ -4,7 +4,7 @@
 
  *README will be updated later*
 
-## Samples
+## Demo
 
 <p align="center">
     <img src="web/images/demo.gif"/><br><br>
