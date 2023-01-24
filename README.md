@@ -2,7 +2,7 @@
 
 * The app is fully functioning 
 
- *README will be updated later*
+ README will be updated later  *(LeBlanc's law)*
 
 ## Demo
 
